@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserService {
 
-    void createUser(User user);
+    User createUser(User user);
 }
