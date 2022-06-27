@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -21,8 +22,10 @@ public class UserController {
     private UserMapper userMapper;
 
     @GetMapping()
-    public List<User> getAllUsers() {
-        return new ArrayList<>();
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers()
+                .stream().map(user -> userMapper.toUserDto(user))
+                .collect(Collectors.toList());
     }
     @PostMapping("/user")
     public UserDto createUser(@RequestBody final UserDto userDto) {
@@ -30,7 +33,11 @@ public class UserController {
        return userMapper.toUserDto(userService.createUser(user));
     }
     @PutMapping("/user/{id}")
-    public void updateUser(@RequestBody final UserDto userDto) {
-        //
+    public void updateUser(@PathVariable("id") final Long id, @RequestBody final UserDto userDto) {
+        userService.updateUser(id, userMapper.toUser(userDto));
+    }
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable("id") final Long id) {
+        return userMapper.toUserDto(userService.getUserById(id));
     }
 }
